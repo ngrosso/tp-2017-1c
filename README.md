@@ -4,4 +4,4 @@
 
 #Horarios de cursada:
 #Santi: miercoles noche;
-\n#Nicolas:Lunes,Martes,Jueves noche;
+#Nicolas:Lunes,Martes,Jueves noche;
