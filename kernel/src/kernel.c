@@ -30,9 +30,11 @@ void inicializarCFG(){
 	quantumSleep=config_get_int_value(configKernel,"QUANTUM_SLEEP");
 	algoritmo=config_get_string_value(configKernel,"ALGORITMO");
 	gradoMultiprog=config_get_int_value(configKernel,"GRADO_MULTIPROG");
+	//ojo, etos 3 array no muestran lo que deberian mostrar HALP
 	semIdent=config_get_array_value(configKernel,"SEM_IDS");
 	semInit=config_get_array_value(configKernel,"SEM_INIT");
 	sharedVars=config_get_array_value(configKernel,"SHARED_VARS");
+
 	stackSize=config_get_int_value(configKernel,"STACK_SIZE");
 }
 
