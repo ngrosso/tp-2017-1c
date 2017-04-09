@@ -5,14 +5,35 @@
 #include<netdb.h>
 #include <commons/config.h>
 
-char ipKernel[10];
-char* puertoKernel;
+
+int puertoKernel="8080";  //este puerto es provisorio porque puertoKernel no existe
 t_config *configKernel;
+char* ipMemoria;
+char* ipFS;
+char* algoritmo;
+int puertoProg,puertoCpu,puertoMem,puertoFS,quantum,quantumSleep,gradoMultiprog,stackSize;
+char** semIdent;
+char** semInit;
+char** sharedVars;
+
 
 void inicializarCFG(){
 	configKernel=malloc(sizeof(t_config));
 	configKernel=config_create("/home/utnso/git/tp-2017-1c-ProgramRangers/kernel/src/kernel.config");
-	puertoKernel=config_get_string_value(configKernel,"PUERTO");
+	puertoProg=config_get_int_value(configKernel,"PUERTO_PROG");
+	puertoCpu=config_get_int_value(configKernel,"PUERTO_CPU");
+	ipMemoria=config_get_string_value(configKernel,"IP_MEMORIA");
+	puertoMem=config_get_int_value(configKernel,"PUERTO_MEMORIA");
+	ipFS=config_get_string_value(configKernel,"IP_FS");
+	puertoFS=config_get_int_value(configKernel,"PUERTO_FS");
+	quantum=config_get_int_value(configKernel,"QUANTUM");
+	quantumSleep=config_get_int_value(configKernel,"QUANTUM_SLEEP");
+	algoritmo=config_get_string_value(configKernel,"ALGORITMO");
+	gradoMultiprog=config_get_int_value(configKernel,"GRADO_MULTIPROG");
+	semIdent=config_get_array_value(configKernel,"SEM_IDS");
+	semInit=config_get_array_value(configKernel,"SEM_INIT");
+	sharedVars=config_get_array_value(configKernel,"SHARED_VARS");
+	stackSize=config_get_int_value(configKernel,"STACK_SIZE");
 }
 
 void broadcastMessage(int fdmax, int socket_fd, char msg[256], int nbytes, fd_set* master, int sender);
@@ -34,7 +55,7 @@ int main(void) {
     	struct addrinfo hints, *res;
 
         inicializarCFG();
-        printf("Archivo configuracion cargado\n La ip del kernel es:  %s \n",puertoKernel);
+        printf("Archivo configuracion cargado\nPuerto para recibir conexiones de programas:%i \nPuerto para recibir conexiones de CPUs:%i \nIP del proceso Memoria:%s puerto:%i \nIP del proceso FileSystem:%s puerto:%i \nQuantum del RoundRobin:%i con retardo de:%i ms \nAlgoritmo(FIFO/RR):%s \nGrado de Multiprogramacion: %i \nTamanio del stack: %i \n",puertoProg,puertoCpu,ipMemoria,puertoMem,ipFS,puertoFS,quantum,quantumSleep,algoritmo,gradoMultiprog,stackSize);
 
 
     	FD_ZERO(&master);
