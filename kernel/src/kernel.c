@@ -23,7 +23,7 @@ char** sharedVars;
 
 void inicializarCFG(){
 	configKernel=malloc(sizeof(t_config));
-	configKernel=config_create("/home/utnso/tp-2017-1c-ProgramRangers/kernel/src/kernel.config");
+	configKernel=config_create("/home/utnso/git/tp-2017-1c-ProgramRangers/kernel/src/kernel.config");
 	puertoProg=config_get_int_value(configKernel,"PUERTO_PROG");
 	puertoCpu=config_get_int_value(configKernel,"PUERTO_CPU");
 	ipMemoria=config_get_string_value(configKernel,"IP_MEMORIA");
@@ -187,6 +187,7 @@ int main(void) {
     		            			}
     		            	}else{ // SI NO ES PETICION DE CONEXION NUEVA
     		            		nbytes = recv(i, buf, sizeof buf, 0);
+    		            		printf("el mensaje recibido es: %s \n",buf);
     		            		if(nbytes  <= 0){ // SI ES ERROR(<0) O DESCONEXION(0)
     		            			if(nbytes == 0){
     		            				printf("Connection of socket N° %i closed\n",i);

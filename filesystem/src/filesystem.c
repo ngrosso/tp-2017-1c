@@ -15,6 +15,7 @@ int puertoKernel;
 //todo: sacar el ID_FS de aca, meterlo todo en un solo lugar
 //podemos hacerlo con un enum?? secundario
 static uint32_t const ID_FS=2;
+char buf[8];
 
 
 //TODO: ESTO TIENE QUE IR A UNA LIBRERIA
@@ -26,7 +27,7 @@ void crearCliente(struct sockaddr_in* direccionServidor, int puerto, char* ip) {
 
 void inicializarCFG(){
 	configFS=malloc(sizeof(t_config));
-	configFS=config_create("/home/utnso/tp-2017-1c-ProgramRangers/filesystem/src/filesystem.config");
+	configFS=config_create("/home/utnso/git/tp-2017-1c-ProgramRangers/filesystem/src/filesystem.config");
 	puerto=config_get_int_value(configFS,"PUERTO");
 	puntoMontaje=config_get_string_value(configFS,"PUNTO_MONTAJE"); //no muestra la ruta
 	ipKernel=config_get_string_value(configFS,"IP_KERNEL");
@@ -36,6 +37,8 @@ void inicializarCFG(){
 void handshake(int socket) {
 	uint32_t idCliente=ID_FS;
 	send(socket,&idCliente,sizeof(uint32_t),0);
+	recv(socket,buf,8,0);
+	printf("el mensaje recibido del kernel es: %s \n",buf);
 }
 
 int main(void) {

@@ -23,7 +23,7 @@ void crearCliente(struct sockaddr_in* direccionServidor, int puerto, char* ip) {
 
 void inicializarCFG(){
 	configConsola=malloc(sizeof(t_config));
-	configConsola=config_create("/home/utnso/tp-2017-1c-ProgramRangers/consola/src/consola.config");
+	configConsola=config_create("/home/utnso/git/tp-2017-1c-ProgramRangers/consola/src/consola.config");
 	ipKernel=config_get_string_value(configConsola,"IP_KERNEL");
 	puertoKernel=config_get_int_value(configConsola,"PUERTO_KERNEL");
 }
@@ -31,6 +31,7 @@ void inicializarCFG(){
 void handshake(int socket) {
 	uint32_t idCliente=ID_CONSOLA;
 	send(socket,&idCliente,sizeof(uint32_t),0);
+	send(socket,"holiwis",8,0);
 }
 
 int main(void) {
