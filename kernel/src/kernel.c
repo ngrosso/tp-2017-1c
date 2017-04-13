@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <netdb.h>
@@ -179,7 +180,9 @@ int main(void) {
     		            			FD_CLR(i, &master); // remove from master set
     		            		}
     		            		else{// RE-ENVIAR MENSAJE A TODOS LOS CONECTADOS
-    		            			printf("el mensaje recibido es: %s \n",buf);
+    		            			char msg[nbytes];
+    		            			strncpy(&msg,&buf,nbytes);
+    		            			printf("el mensaje recibido es: %s \n",msg);
     		            			broadcastMessage(fdmax,socket_fd,buf,nbytes,&master,i); // socket maximo, socket listener, mensaje, length msg, fd_set, sender
     		            		}
     		            	}
