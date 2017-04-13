@@ -63,6 +63,9 @@ int handShake(int socket) {
 	case 2:
 		return 2;
 		break;
+	case 3:
+		return 3;
+		break;
 	default:
 		printf("hubo un error\n");
 		return 0;
@@ -171,8 +174,13 @@ int main(void) {
         		            				if (new_fd > fdmax) {   // actualizar el máximo
         		            					fdmax = new_fd;
         		            				}
-    		            				}
-    		            				else{
+    		            				}else if(valHandshake==3) {
+    		            					printf("se conecto la memoria\n");
+        		            				FD_SET(new_fd, &master); //añadir al conjunto maestro
+        		            				if (new_fd > fdmax) {   // actualizar el máximo
+        		            					fdmax = new_fd;
+        		            				}
+    		            				}else{
     		            					printf("conexion invalida\n");
     		            					return 0;
     		            					break;

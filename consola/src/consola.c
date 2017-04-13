@@ -36,6 +36,7 @@ void handshake(int socket) {
 
 int main(void) {
     inicializarCFG();
+    printf("archivo configuracion cargado\n la ip del proceso kernel es: %s puerto: %d \n",ipKernel,puertoKernel);
 
 	//Conexion con el Kernel, podria ir en la libreria tambien(no nos emocionemos)-------------------------------------------------------------------------------------------------------------------
 	struct sockaddr_in direccionServidor;
@@ -50,7 +51,7 @@ int main(void) {
 	//Verifico conexion con el Kernel-----------------------------------------------------------------------------------------------------------
 	handshake(server);
 
-    printf("archivo configuracion cargado\n la ip del proceso kernel es: %s puerto: %d \n",ipKernel,puertoKernel);
+
     return 0;
 }
 
