@@ -187,7 +187,6 @@ int main(void) {
     		            			}
     		            	}else{ // SI NO ES PETICION DE CONEXION NUEVA
     		            		nbytes = recv(i, buf, sizeof buf, 0);
-    		            		printf("el mensaje recibido es: %s \n",buf);
     		            		if(nbytes  <= 0){ // SI ES ERROR(<0) O DESCONEXION(0)
     		            			if(nbytes == 0){
     		            				printf("Connection of socket N° %i closed\n",i);
@@ -198,6 +197,7 @@ int main(void) {
     		            			FD_CLR(i, &master); // remove from master set
     		            		}
     		            		else{// RE-ENVIAR MENSAJE A TODOS LOS CONECTADOS
+    		            			printf("el mensaje recibido es: %s \n",buf);
     		            			broadcastMessage(fdmax,socket_fd,buf,nbytes,&master,i); // socket maximo, socket listener, mensaje, length msg, fd_set, sender
     		            		}
     		            	}
