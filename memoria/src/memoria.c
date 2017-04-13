@@ -10,6 +10,7 @@ char* reemplazoCache;
 int puerto,marcos,tamanioMarco,entradasCache,maxEntradasCacheXProg,retardoMemoria,server;
 t_config *configMemoria;
 static uint32_t const ID_MEMORIA=3;
+char buf[8];
 
 //TODO: ESTO TIENE QUE IR A UNA LIBRERIA
 void crearCliente(struct sockaddr_in* direccionServidor, int puerto, char* ip) {
@@ -33,7 +34,8 @@ void inicializarCFG(){
 void handshake(int socket) {
 	uint32_t idCliente=ID_MEMORIA;
 	send(socket,&idCliente,sizeof(uint32_t),0);
-	send(socket,"holiwis",8,0);
+	recv(socket,buf,8,0);
+	printf("el mensaje recibido del kernel es: %s \n",buf);
 }
 
 int main(void) {

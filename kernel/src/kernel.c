@@ -54,26 +54,7 @@ int handShake(int socket) {
 	}
 	printf("codigoProceso recibido en handshake %i", idCliente);
 	printf("\n");
-	switch (idCliente) {
-	//TODO: aca se van a ir agregando los valores idCliente para cada uno;
-	//este mapeo recibo n devuelvo n es para que no se conecte cualquiera
-	case 1:
-		return 1;
-		break;
-	case 2:
-		return 2;
-		break;
-	case 3:
-		return 3;
-		break;
-	case 4:
-		return 4;
-		break;
-	default:
-		printf("hubo un error\n");
-		return 0;
-		break;
-	}
+	return idCliente;
 }
 
 int main(void) {
@@ -163,44 +144,28 @@ int main(void) {
     		            			}else{
     		            				//handshake sobroson
     		            				valHandshake=handShake(new_fd);
-    		            				printf(" valor del handshake: %i", valHandshake);
-    		            				printf("\n");
-    		            				if(valHandshake==1) {
-    		            					printf("se conecto la consola\n");
-        		            				FD_SET(new_fd, &master); //añadir al conjunto maestro
-        		            				if (new_fd > fdmax) {   // actualizar el máximo
-        		            					fdmax = new_fd;
-        		            				}
-    		            				}else if(valHandshake==2) {
-    		            					printf("se conecto el filesystem\n");
-        		            				FD_SET(new_fd, &master); //añadir al conjunto maestro
-        		            				if (new_fd > fdmax) {   // actualizar el máximo
-        		            					fdmax = new_fd;
-        		            				}
-    		            				}else if(valHandshake==3) {
-    		            					printf("se conecto la memoria\n");
-        		            				FD_SET(new_fd, &master); //añadir al conjunto maestro
-        		            				if (new_fd > fdmax) {   // actualizar el máximo
-        		            					fdmax = new_fd;
-        		            				}
-    		            				}else if(valHandshake==4) {
-    		            					printf("se conecto el CPU\n");
-        		            				FD_SET(new_fd, &master); //añadir al conjunto maestro
-        		            				if (new_fd > fdmax) {   // actualizar el máximo
-        		            					fdmax = new_fd;
-        		            				}
-    		            				}else{
-    		            					printf("conexion invalida\n");
-    		            					return 0;
+    		            				printf(" valor del handshake: %i \n", valHandshake);
+    		            				switch(valHandshake){
+    		            				case 1:
+    		            					printf("Se conecto la consola\n");
     		            					break;
+    		            				case 2:
+    		            					printf("Se conecto el filesystem\n");
+    		            					break;
+    		            				case 3:
+    		            					printf("Se conecto la memoria\n");
+    		            					break;
+    		            				case 4:
+    		            					printf("Se conecto el CPU\n");
+    		            					break;
+    		            				default :
+    		            					printf("Error de handshake\n");
+    		            					return -1;
     		            				}
-
-    		            				//TODO: esto va en cada case
-//    		            				FD_SET(new_fd, &master); //añadir al conjunto maestro
-//    		            				if (new_fd > fdmax) {   // actualizar el máximo
-//    		            					fdmax = new_fd;
-//    		            				}
-    		            				//fin codigo repetido
+    		            				FD_SET(new_fd, &master); //añadir al conjunto maestro
+        		            			if (new_fd > fdmax) {   // actualizar el máximo
+        		            					fdmax = new_fd;
+        		            			}
     		            			}
     		            	}else{ // SI NO ES PETICION DE CONEXION NUEVA
     		            		nbytes = recv(i, buf, sizeof buf, 0);

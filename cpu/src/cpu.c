@@ -6,6 +6,7 @@
 
 int server;
 static uint32_t const ID_CPU=4;
+char buf[8];
 
 //TODO: ESTO TIENE QUE IR A UNA LIBRERIA
 void crearCliente(struct sockaddr_in* direccionServidor, int puerto, char* ip) {
@@ -17,7 +18,8 @@ void crearCliente(struct sockaddr_in* direccionServidor, int puerto, char* ip) {
 void handshake(int socket) {
 	uint32_t idCliente=ID_CPU;
 	send(socket,&idCliente,sizeof(uint32_t),0);
-	send(socket,"holiwis",8,0);
+	recv(socket,buf,8,0);
+	printf("el mensaje recibido del kernel es: %s \n",buf);
 }
 
 int main(void) {
