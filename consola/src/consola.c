@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
+#include <string.h>
 #include <sys/socket.h>
 #include <arpa/inet.h>
 #include <netdb.h>
@@ -31,7 +32,12 @@ void inicializarCFG(){
 void handshake(int socket) {
 	uint32_t idCliente=ID_CONSOLA;
 	send(socket,&idCliente,sizeof(uint32_t),0);
-	send(socket,"holiwis",8,0);
+}
+
+void consoleToKernel(int socket){
+	char buf[256];
+	scanf("%s",buf);
+	send(socket,buf,strlen(buf),0);
 }
 
 int main(void) {
@@ -51,6 +57,7 @@ int main(void) {
 	//Verifico conexion con el Kernel-----------------------------------------------------------------------------------------------------------
 	handshake(server);
 
+	consoleToKernel(server);
 
     return 0;
 }

@@ -15,7 +15,7 @@ int puertoKernel;
 //todo: sacar el ID_FS de aca, meterlo todo en un solo lugar
 //podemos hacerlo con un enum?? secundario
 static uint32_t const ID_FS=2;
-char buf[8];
+char buf[256];
 
 
 //TODO: ESTO TIENE QUE IR A UNA LIBRERIA

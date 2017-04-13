@@ -10,7 +10,7 @@ char* reemplazoCache;
 int puerto,marcos,tamanioMarco,entradasCache,maxEntradasCacheXProg,retardoMemoria,server;
 t_config *configMemoria;
 static uint32_t const ID_MEMORIA=3;
-char buf[8];
+char buf[256];
 
 //TODO: ESTO TIENE QUE IR A UNA LIBRERIA
 void crearCliente(struct sockaddr_in* direccionServidor, int puerto, char* ip) {

@@ -6,7 +6,7 @@
 
 int server;
 static uint32_t const ID_CPU=4;
-char buf[8];
+char buf[256];
 
 //TODO: ESTO TIENE QUE IR A UNA LIBRERIA
 void crearCliente(struct sockaddr_in* direccionServidor, int puerto, char* ip) {
