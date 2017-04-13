@@ -66,6 +66,9 @@ int handShake(int socket) {
 	case 3:
 		return 3;
 		break;
+	case 4:
+		return 4;
+		break;
 	default:
 		printf("hubo un error\n");
 		return 0;
@@ -176,6 +179,12 @@ int main(void) {
         		            				}
     		            				}else if(valHandshake==3) {
     		            					printf("se conecto la memoria\n");
+        		            				FD_SET(new_fd, &master); //añadir al conjunto maestro
+        		            				if (new_fd > fdmax) {   // actualizar el máximo
+        		            					fdmax = new_fd;
+        		            				}
+    		            				}else if(valHandshake==4) {
+    		            					printf("se conecto el CPU\n");
         		            				FD_SET(new_fd, &master); //añadir al conjunto maestro
         		            				if (new_fd > fdmax) {   // actualizar el máximo
         		            					fdmax = new_fd;
