@@ -6,3 +6,4 @@
 #Santi: miercoles noche;
 #Nicolas:Lunes,Martes,Jueves noche;
 #Rodrigo : Martes, Miercoles noche
+#Ariel: Martes noche;
