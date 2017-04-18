@@ -5,11 +5,12 @@
 #include <sys/types.h>
 #include <netdb.h>
 #include <commons/config.h>
+#include <estructuras.h>
 
 
 //todo: sacar el ID_CONSOLA de aca, meterlo todo en un solo lugar
-static uint32_t const ID_CONSOLA=1;
-static uint32_t const ID_FILESYSTEM=2;
+//static uint32_t const ID_CONSOLA=1;
+//static uint32_t const ID_FILESYSTEM=2;
 
 int puertoKernel="8080";  //este puerto es provisorio porque puertoKernel no existe
 t_config *configKernel;
@@ -24,7 +25,7 @@ char** sharedVars;
 
 void inicializarCFG(){
 	configKernel=malloc(sizeof(t_config));
-	configKernel=config_create("/home/utnso/git/tp-2017-1c-ProgramRangers/kernel/src/kernel.config");
+	configKernel=config_create("/home/utnso/tp-2017-1c-ProgramRangers/kernel/src/kernel.config");
 	puertoProg=config_get_int_value(configKernel,"PUERTO_PROG");
 	puertoCpu=config_get_int_value(configKernel,"PUERTO_CPU");
 	ipMemoria=config_get_string_value(configKernel,"IP_MEMORIA");
@@ -58,6 +59,30 @@ int handShake(int socket) {
 	return idCliente;
 }
 
+//void initProcesoEnMemoria(int pid, int cantPaginas, int socketMemoria){
+//	uint32_t resultado;
+//	uint32_t procID=pid;
+////	uint32_t cantPag=obtenerCantPags(programa);
+////	uint32_t tamPrograma=strlen(programa)+1;
+//	uint32_t orden=INICIALIZAR_PROGRAMA_MEMORIA;
+//	int puntero=0;
+//	void* buffer=malloc(sizeof(uint32_t)*4+tamPrograma);
+//	memcpy(buffer,&orden,sizeof(uint32_t));
+//	puntero+=sizeof(uint32_t);
+//	memcpy(buffer+puntero,&procID,sizeof(uint32_t));
+//	puntero+=sizeof(uint32_t);
+//	memcpy(buffer+puntero,&cantPag,sizeof(uint32_t));
+//	puntero+=sizeof(uint32_t);
+//	memcpy(buffer+puntero,&tamPrograma,sizeof(uint32_t));
+//	puntero+=sizeof(uint32_t);
+//	memcpy(buffer+puntero,programa,tamPrograma);
+//	puntero+=tamPrograma;
+//	send(UMC,buffer,puntero,0);
+//	recv(UMC,&resultado,sizeof(uint32_t),0);
+//	free(buffer);
+//	return resultado;
+//}
+
 int main(void) {
     	fd_set master;    // master file descriptor list
     	fd_set read_fds;  // temp file descriptor list for select()
@@ -73,7 +98,6 @@ int main(void) {
     	socklen_t addr_size;
     	struct sockaddr_storage their_addr;
     	struct addrinfo hints, *res;
-
         inicializarCFG();
         printf("Archivo configuracion cargado\nPuerto para recibir conexiones de programas:%i \nPuerto para recibir conexiones de CPUs:%i \nIP del proceso Memoria:%s puerto:%i \nIP del proceso FileSystem:%s puerto:%i \nQuantum del RoundRobin:%i con retardo de:%i ms \nAlgoritmo(FIFO/RR):%s \nGrado de Multiprogramacion: %i \nTamanio del stack: %i \n",puertoProg,puertoCpu,ipMemoria,puertoMem,ipFS,puertoFS,quantum,quantumSleep,algoritmo,gradoMultiprog,stackSize);
 
