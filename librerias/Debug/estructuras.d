@@ -1,0 +1,1 @@
+estructuras.d: ../estructuras.c
