@@ -8,6 +8,8 @@
 #ifndef ESTRUCTURAS_H_
 #define ESTRUCTURAS_H_
 
+#include <commons/collections/list.h>
+#include <stdint.h>
 
 typedef enum {
 	ID_KERNEL,
@@ -19,5 +21,9 @@ typedef enum {
 							//al nucleo que termine un programa(Se puede usar cuando no hay frames para realizar el algoritmo de clock, que conlleva a matar el proceso)
 } identificadores;
 
+typedef struct {
+	uint32_t PID;
+	uint32_t PC;
+} t_PCB;
 
 #endif /* ESTRUCTURAS_H_ */
