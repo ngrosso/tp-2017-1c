@@ -26,4 +26,12 @@ typedef struct {
 	uint32_t PC;
 } t_PCB;
 
+typedef struct { // Struct de headers de envio de datos
+	uint32_t m_id;
+	uint32_t m_size;
+	void* m_payload;
+} t_msg;
+
+void serializeAndSend(t_msg* mensaje, int receiver);
+
 #endif /* ESTRUCTURAS_H_ */

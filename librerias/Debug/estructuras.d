@@ -1,1 +1,3 @@
-estructuras.d: ../estructuras.c
+estructuras.d: ../estructuras.c ../estructuras.h
+
+../estructuras.h:

@@ -3,6 +3,9 @@
 ################################################################################
 
 # Add inputs and outputs from these tool invocations to the build variables 
+O_SRCS += \
+../estructuras.o 
+
 C_SRCS += \
 ../estructuras.c 
 
