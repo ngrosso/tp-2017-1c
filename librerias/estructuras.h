@@ -32,6 +32,8 @@ typedef struct { // Struct de headers de envio de datos
 	void* m_payload;
 } t_msg;
 
-void serializeAndSend(t_msg* mensaje, int receiver);
+int serializeAndSend(t_msg* mensaje, int receiver);
+
+int recvAndDeserialize(int sender,void* retrnVal);
 
 #endif /* ESTRUCTURAS_H_ */
