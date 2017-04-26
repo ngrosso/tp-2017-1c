@@ -18,7 +18,6 @@
 int serializeAndSend(t_msg* mensaje, int receiver){
 	int mallocSize = sizeof(mensaje->m_id) + sizeof(mensaje->m_size) + mensaje->m_size;
 	char* aux = malloc(mallocSize);
-
 	memcpy(aux,&mensaje->m_id,sizeof(mensaje->m_id));
 	memcpy(aux + sizeof(mensaje->m_id),&mensaje->m_size,sizeof(mensaje->m_size));
 	memcpy(aux + sizeof(mensaje->m_id) + sizeof(mensaje->m_size), &mensaje->m_payload, sizeof(mensaje->m_payload));

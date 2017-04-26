@@ -6,6 +6,8 @@
 #include <netdb.h>
 #include <commons/config.h>
 #include <estructuras.h>
+#include <estructuras.c>
+
 
 
 //todo: sacar el ID_CONSOLA de aca, meterlo todo en un solo lugar
@@ -25,7 +27,7 @@ char** sharedVars;
 
 void inicializarCFG(){
 	configKernel=malloc(sizeof(t_config));
-	configKernel=config_create("/home/utnso/tp-2017-1c-ProgramRangers/kernel/src/kernel.config");
+	configKernel=config_create("/home/utnso/git/tp-2017-1c-ProgramRangers/kernel/src/kernel.config");
 	puertoProg=config_get_int_value(configKernel,"PUERTO_PROG");
 	puertoCpu=config_get_int_value(configKernel,"PUERTO_CPU");
 	ipMemoria=config_get_string_value(configKernel,"IP_MEMORIA");
@@ -50,7 +52,8 @@ void broadcastMessage(int fdmax, int socket_fd, char msg[256], int nbytes, fd_se
 
 int handShake(int socket) {
 	uint32_t idCliente;
-	int nBytes = recv(socket, &idCliente, sizeof(uint32_t), 0);
+	recvAndDeserialize(socket,&idCliente);
+	int nBytes = &idCliente;
 	if (nBytes <= 0) {
 		return 0;
 	}

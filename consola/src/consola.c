@@ -6,13 +6,16 @@
 #include <sys/socket.h>
 #include <arpa/inet.h>
 #include <netdb.h>
+#include <estructuras.h>
+#include <estructuras.c>
+#define ID_CONSOLA 1
 
 //GLOBALES
 char* ipKernel;
 int puertoKernel;
 t_config *configConsola;
 //todo: sacar el ID_CONSOLA de aca, meterlo todo en un solo lugar, podemos hacerlo con un enum
-static uint32_t const ID_CONSOLA=1;
+//static uint32_t const ID_CONSOLA=1;
 int server;
 
 //TODO: ESTO TIENE QUE IR A UNA LIBRERIA
@@ -31,13 +34,13 @@ void inicializarCFG(){
 
 void handshake(int socket) {
 	uint32_t idCliente=ID_CONSOLA;
-	send(socket,&idCliente,sizeof(uint32_t),0);
+	serializeAndSend(&idCliente, socket);
 }
 
 void consoleToKernel(int socket){
 	char buf[256];
 	scanf("%s",buf);
-	send(socket,buf,strlen(buf),0);
+	serializeAndSend(&buf, socket);
 }
 
 int main(void) {
