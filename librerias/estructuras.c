@@ -18,17 +18,24 @@
 int serializeAndSend(t_msg* mensaje, int receiver){
 	int mallocSize = sizeof(mensaje->m_id) + sizeof(mensaje->m_size) + mensaje->m_size;
 	char* aux = malloc(mallocSize);
+
 	memcpy(aux,&mensaje->m_id,sizeof(mensaje->m_id));
 	memcpy(aux + sizeof(mensaje->m_id),&mensaje->m_size,sizeof(mensaje->m_size));
-	memcpy(aux + sizeof(mensaje->m_id) + sizeof(mensaje->m_size), &mensaje->m_payload, sizeof(mensaje->m_payload));
+
+	switch(mensaje->m_id){//En caso de ser un struct customizado
+	case PCB:
+		memcpy(aux + sizeof(mensaje->m_id) + sizeof(mensaje->m_size), &mensaje->m_payload, sizeof(uint32_t)*2);//Al ser 2 int (8bytes, multiplo de 4) no hace falta separar para serializar
+		break;
+	default:
+		memcpy(aux + sizeof(mensaje->m_id) + sizeof(mensaje->m_size), &mensaje->m_payload, &mensaje->m_size);
+	}
 
 	send(receiver,aux,mallocSize,0);
 	//todo: Send "canchero" (Catcheando excepciones)
 
-	close(aux);
+	free(aux);
 	return 1;
 }
-
 int recvAndDeserialize(int sender, void* retrnVal){
 	int recvValue;
 	int id_buffer;
@@ -36,7 +43,9 @@ int recvAndDeserialize(int sender, void* retrnVal){
 	char* pl_buffer;
 	t_PCB* pcb_buffer = malloc(sizeof(t_PCB));
 	recvValue = recv(sender,&id_buffer,4,0);
-	if(recvValue != 0){
+	if(recvValue == 0) //Si el recv == 0 entonces el socket se desconecto, lo maneja la funcion que llama
+		return 0;
+	else{
 		switch(id_buffer){
 		case HANDSHAKE:
 			recv(sender,&size_buffer,4,0);
@@ -58,8 +67,8 @@ int recvAndDeserialize(int sender, void* retrnVal){
 			retrnVal = &pcb_buffer;
 			break;
 		}
-	}else{
-		return 0;
 	}
+	free(pl_buffer);
+	free(pcb_buffer);
 	return 1;
 }
