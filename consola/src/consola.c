@@ -8,9 +8,12 @@
 #include <netdb.h>
 #include <estructuras.h>
 #include <estructuras.c>
+#include <pthread.h>
+#include <unistd.h>
 #define ID_CONSOLA 1
 
 //GLOBALES
+int variablemagica=0;
 char* ipKernel;
 int puertoKernel;
 t_config *configConsola;
@@ -43,25 +46,71 @@ void consoleToKernel(int socket){
 	serializeAndSend(&buf, socket);
 }
 
+void clearScreen()
+{
+  const char *CLEAR_SCREEN_ANSI = "\e[1;1H\e[2J";
+  write(STDOUT_FILENO, CLEAR_SCREEN_ANSI, 12);
+}
+
+void interfazConsola(){
+	while(1){
+
+	puts("Seleccione una opcion: \n1 para Iniciar Programa \n2 para Finalizar Programa \n3 para Desconectar la consola \n4 para Limpiar consola\n");
+	int seleccion;
+	scanf("%i",&seleccion);
+	switch(seleccion){
+    	case 1:
+    		printf("Inciar programa\n\n");
+
+    	break;
+    	case 2:
+    		printf("Finalizar Programa\n\n");
+
+    	break;
+    	case 3:
+    		printf("Desconectar Consola\n\n");
+
+    	break;
+    	case 4:
+    	    printf("Limpiar Consola\n\n");
+    	    clearScreen();
+    	    printf("\n");
+    	    printf("\n");
+    	break;
+    	default :
+    		printf("Ingrese una opcion valida\n\n");
+		}
+	}
+}
+
 int main(void) {
+
     inicializarCFG();
     printf("archivo configuracion cargado\n la ip del proceso kernel es: %s puerto: %d \n",ipKernel,puertoKernel);
 
-	//Conexion con el Kernel, podria ir en la libreria tambien(no nos emocionemos)-------------------------------------------------------------------------------------------------------------------
-	struct sockaddr_in direccionServidor;
-	server = socket(AF_INET, SOCK_STREAM, 0);
-	crearCliente(&direccionServidor,puertoKernel,ipKernel);
-	if (connect(server, (void*) &direccionServidor, sizeof(direccionServidor))
-			!= 0) {
-		perror("No se pudo conectar al kernel");
-		return 1;
-	}
+    pthread_t consola;
+    pthread_attr_t atributo;
+    pthread_attr_init(&atributo);
+    pthread_attr_setdetachstate(&atributo,PTHREAD_CREATE_DETACHED);
+    pthread_create(&consola,&atributo,(void*)interfazConsola,NULL);
 
-	//Verifico conexion con el Kernel-----------------------------------------------------------------------------------------------------------
-	handshake(server);
+//	//Conexion con el Kernel, podria ir en la libreria tambien(no nos emocionemos)-------------------------------------------------------------------------------------------------------------------
+//	struct sockaddr_in direccionServidor;
+//	server = socket(AF_INET, SOCK_STREAM, 0);
+//	crearCliente(&direccionServidor,puertoKernel,ipKernel);
+//	if (connect(server, (void*) &direccionServidor, sizeof(direccionServidor))
+//			!= 0) {
+//		perror("No se pudo conectar al kernel");
+//		return 1;
+//	}
+//
+//	//Verifico conexion con el Kernel-----------------------------------------------------------------------------------------------------------
+//	handshake(server);
+//
+//	consoleToKernel(server);
+ while(1){
 
-	consoleToKernel(server);
-
+ }
     return 0;
 }
 
