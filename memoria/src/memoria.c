@@ -112,16 +112,17 @@ int main(void) {
     printf("archivo configuracion cargado\nPuerto para recibir conexiones del Kernel y CPUs: %i \nCantidad marcos disponibles: %i \nTamanio de marcos(en bytes): %i \nCantidad entradas en cache(0=deshabilitada): %i \nEntradas asignables a la cache max: %i \nReemplazo cache: %s \nRetardo de memoria:%i \n",puerto,marcos,tamanioMarco,entradasCache,maxEntradasCacheXProg,reemplazoCache,retardoMemoria);
 //
 //    //HARDCODED
-//    struct sockaddr_in direccionServidor;
-//    	server = socket(AF_INET, SOCK_STREAM, 0);
-//    	crearCliente(&direccionServidor,8080,"127.0.0.1");
-//    	if (connect(server, (void*) &direccionServidor, sizeof(direccionServidor))
-//    			!= 0) {
-//    		perror("No se pudo conectar al kernel");
+    struct sockaddr_in direccionServidor;
+    	server = socket(AF_INET, SOCK_STREAM, 0);
+    	crearCliente(&direccionServidor,8080,"127.0.0.1");
+    	if (connect(server, (void*) &direccionServidor, sizeof(direccionServidor))
+    			!= 0) {
+    		perror("No se pudo conectar al kernel");
 //    		return 1;
-//    	}
-//
-//    handshake(server);
+//    		TODO: VER QUE HACER CUANDO NO SE PUEDE CONECTAR
+    	}
+
+    handshake(server);
 
 	int thread_consola;
 	pthread_t hiloConsola;
@@ -129,6 +130,8 @@ int main(void) {
 	pthread_attr_init(&atributo);
 	pthread_attr_setdetachstate(&atributo, PTHREAD_CREATE_DETACHED);
 	thread_consola = pthread_create(&hiloConsola, &atributo, (void*) listenerConsola, NULL);
+//	TODO: CHECKEAR CORRECTA CREACION DEL HILO
+
 
 	while(1){
 

@@ -5,13 +5,11 @@
 #include <sys/types.h>
 #include <netdb.h>
 #include <commons/config.h>
-#include <estructuras.h>
-#include <estructuras.c>
-
+#include "estructuras.h"
 
 
 //todo: sacar el ID_CONSOLA de aca, meterlo todo en un solo lugar
-//static uint32_t const ID_CONSOLA=1;
+//static uint32_t const ID_CONSOLA=1;INICIALIZAR_ANSISOP
 //static uint32_t const ID_FILESYSTEM=2;
 
 int puertoKernel="8080";  //este puerto es provisorio porque puertoKernel no existe
@@ -23,6 +21,7 @@ int puertoProg,puertoCpu,puertoMem,puertoFS,quantum,quantumSleep,gradoMultiprog,
 char** semIdent;
 char** semInit;
 char** sharedVars;
+void *buf;    // buffer para datos del cliente
 
 
 void inicializarCFG(){
@@ -62,6 +61,113 @@ int handShake(int socket) {
 	return idCliente;
 }
 
+
+void atenderOrdenSegunID(int socket,uint32_t id, int tamanio) {
+	uint32_t orden;
+	uint32_t tamanio_buffer;
+	int mov_puntero=tamanio;
+	int valor;
+	switch ((int) id) {
+		case ID_CONSOLA:
+			memcpy(&orden, buf + mov_puntero, sizeof(uint32_t));
+			mov_puntero += sizeof(uint32_t);
+			switch (orden) {
+//			todo: poner esto en una var global a todos los procesos
+//			case INICIALIZAR_ANSISOP: {
+			case 123: {
+					printf("sabe");
+					memcpy(&tamanio_buffer, buf + mov_puntero, sizeof(uint32_t));
+//					inicializarAnsisop(socket,tamanio_buffer); //aca inicializo el programa Ansisop, osea PCB etc etc
+				}
+				break;
+//				TODO: VER CADA CASO
+//				case FINALIZAR_ANSISOP: {
+//					memcpy(&tamanio_buffer, buf + mov_puntero, sizeof(uint32_t));
+//					buscarPCByEliminar(socket);
+//					close(socket);
+//					FD_CLR(socket,&master);
+//				}
+			}
+		break;
+		case ID_CPU:
+			memcpy(&orden, buf + mov_puntero, sizeof(uint32_t));
+			mov_puntero += sizeof(uint32_t);
+			//				TODO: VER CADA CASO
+//			switch((int)orden){
+//				case OBTENER_VALOR:
+//					memcpy(&tamanio_buffer, buf + mov_puntero, sizeof(uint32_t));
+//					obtenerValorGlobal(socket,tamanio_buffer);
+//				break;
+//				case GRABAR_VALOR:
+//					memcpy(&tamanio_buffer, buf + mov_puntero, sizeof(uint32_t));
+//					grabarValor(socket,tamanio_buffer);
+//				break;
+//				case WAIT:
+//					memcpy(&tamanio_buffer, buf + mov_puntero, sizeof(uint32_t));
+//					waitSemaforo(socket,tamanio_buffer);
+//				break;
+//				case SIGNAL:
+//					memcpy(&tamanio_buffer, buf + mov_puntero, sizeof(uint32_t));
+//					signalSemaforo(socket,tamanio_buffer);
+//				break;
+//				case ENTRADA_SALIDA:
+//					memcpy(&tamanio_buffer, buf + mov_puntero, sizeof(uint32_t));
+//					valor=actualizarCPUlibre(socket);
+//					if(valor==0){
+//					bloquearPCBaIO(socket,tamanio_buffer);
+//					}
+//					else{
+//					eliminarDatosNoRelevantesIO(socket,tamanio_buffer);
+//					finalizarPCB(socket);
+//					//en el metodo finalizarPCB debería obtener el ID del proceso y hacer send a la UMC para que libere la memoria asociada al mismo
+//					}
+//				break;
+//				case PASO_QUANTUM:
+//					memcpy(&tamanio_buffer, buf + mov_puntero, sizeof(uint32_t));
+//					actualizarQuantumCPU(socket);
+//				break;
+//				case FIN_ANSISOP:
+//					printf("vamo a finalizar el Ansisop\n");
+//					memcpy(&tamanio_buffer, buf + mov_puntero, sizeof(uint32_t));
+//					finalizarPCBTradicional(socket,tamanio_buffer);
+//					//aca debería obtener el ID del proceso y hacer send a la UMC para que libere la memoria asociada al mismo
+//				break;
+//				case BLOQUEAR_PCB_SEMAFORO:
+//					memcpy(&tamanio_buffer, buf + mov_puntero, sizeof(uint32_t));
+//					valor=actualizarCPUlibre(socket);
+//					if(valor==0){
+//					bloquearPCBaSemaforo(socket,tamanio_buffer);
+//					}
+//					else{
+//					eliminarDatosNoRelevantesSem(socket,tamanio_buffer);
+//					finalizarPCB(socket);
+//					//aca debería obtener el ID del proceso y hacer send a la UMC para que libere la memoria asociada al mismo
+//					}
+//				break;
+//				case IMPRIMIR_TEXTO:
+//					memcpy(&tamanio_buffer, buf + mov_puntero, sizeof(uint32_t));
+//					mandarAImprimirTexto(socket,tamanio_buffer);
+//				break;
+//				case FIN_QUANTUM:
+//					memcpy(&tamanio_buffer, buf + mov_puntero, sizeof(uint32_t));
+//					valor=actualizarCPUlibre(socket);
+//					if(valor==0){
+//					mandarAready(socket,tamanio_buffer);//tengo que deserializar el pcb y mandarlo a ready
+//					}
+//					else{
+//					finalizarPCBTradicional(socket,tamanio_buffer);
+//					//en el metodo finalizarPCB debería obtener el ID del proceso y hacer send a la UMC para que libere la memoria asociada al mismo
+//					}
+//				break;
+//				case FIN_CPU:
+//					memcpy(&tamanio_buffer, buf + mov_puntero, sizeof(uint32_t));
+//					eliminarCPU(socket);
+//				break;
+//			}
+		break;
+	}
+	free (buf);
+}
 //void initProcesoEnMemoria(int pid, int cantPaginas, int socketMemoria){
 //	uint32_t resultado;
 //	uint32_t procID=pid;
@@ -108,6 +214,7 @@ int main(void) {
         int valHandshake;
     	FD_ZERO(&master);
     	FD_ZERO(&read_fds);
+    	uint32_t idProcesoEntrante;
 
     	memset(&hints, 0, sizeof hints); // Inicializar el struct
     	hints.ai_family = AF_UNSPEC;
@@ -207,10 +314,10 @@ int main(void) {
     		            			FD_CLR(i, &master); // remove from master set
     		            		}
     		            		else{// RE-ENVIAR MENSAJE A TODOS LOS CONECTADOS
-    		            			char msg[nbytes];
-    		            			strncpy(&msg,&buf,nbytes);
-    		            			printf("el mensaje recibido es: %s \n",msg);
-    		            			broadcastMessage(fdmax,socket_fd,buf,nbytes,&master,i); // socket maximo, socket listener, mensaje, length msg, fd_set, sender
+    		    					int tamanio=0;
+    		    					memcpy(&idProcesoEntrante,buf,sizeof(uint32_t));
+    		    					tamanio+=sizeof(uint32_t);
+    		    					atenderOrdenSegunID(i,idProcesoEntrante,tamanio);
     		            		}
     		            	}
     		            }

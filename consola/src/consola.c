@@ -6,11 +6,9 @@
 #include <sys/socket.h>
 #include <arpa/inet.h>
 #include <netdb.h>
-#include <estructuras.h>
-#include <estructuras.c>
 #include <pthread.h>
 #include <unistd.h>
-#define ID_CONSOLA 1
+#include "estructuras.h"
 
 //GLOBALES
 int variablemagica = 0;
@@ -20,6 +18,9 @@ t_config *configConsola;
 //todo: sacar el ID_CONSOLA de aca, meterlo todo en un solo lugar, podemos hacerlo con un enum
 //static uint32_t const ID_CONSOLA=1;
 int server;
+FILE* progAnsisop;
+void* buffer;
+
 
 //TODO: ESTO TIENE QUE IR A UNA LIBRERIA
 void crearCliente(struct sockaddr_in* direccionServidor, int puerto, char* ip) {
@@ -28,11 +29,37 @@ void crearCliente(struct sockaddr_in* direccionServidor, int puerto, char* ip) {
 	direccionServidor->sin_port = htons(puerto);
 }
 
+void enviarAnsisop(int server, char* argumento){
+	progAnsisop=fopen(argumento,"rb");
+	if (progAnsisop == NULL){
+		printf("No se pudo abrir el archivo\n");
+		abort();
+	}
+
+	fseek(progAnsisop,0,SEEK_END);
+	uint32_t sizeAnsisop=(ftell(progAnsisop)-115);
+	fseek(progAnsisop,115,SEEK_SET);
+	void*bufferArchivo=malloc(sizeAnsisop);
+	fread(bufferArchivo,sizeAnsisop,1,progAnsisop);
+	buffer=malloc(sizeAnsisop+(sizeof(uint32_t)*3));
+	printf("%s\n",(char*)bufferArchivo);
+	uint32_t idconsola= ID_CONSOLA;
+//	TODO: PONER LA ORDEN
+//	uint32_t orden = INICIALIZAR_ANSISOP;
+	uint32_t orden = 123;
+	memcpy(buffer,&idconsola,sizeof(uint32_t));
+	memcpy(buffer+sizeof(uint32_t),&orden,sizeof(uint32_t));
+	memcpy(buffer+(sizeof(uint32_t)*2),&sizeAnsisop,sizeof(uint32_t));
+	memcpy(buffer+(sizeof(uint32_t)*3),bufferArchivo,sizeAnsisop);
+	send(server,buffer,((sizeof(uint32_t)*3)+sizeAnsisop),0);
+	free(bufferArchivo);
+}
+
 void inicializarCFG() {
 	configConsola = malloc(sizeof(t_config));
 	configConsola =
 			config_create(
-					"/home/utnso/git/tp-2017-1c-ProgramRangers/consola/src/consola.config");
+					"/home/utnso/tp-2017-1c-ProgramRangers/consola/src/consola.config");
 	ipKernel = config_get_string_value(configConsola, "IP_KERNEL");
 	puertoKernel = config_get_int_value(configConsola, "PUERTO_KERNEL");
 }
@@ -57,8 +84,8 @@ void clearScreen() {
 	write(STDOUT_FILENO, CLEAR_SCREEN_ANSI, 12);
 }
 
-int hiloPrograma(){
-	return 1;
+void hiloPrograma(){
+//	TODO: unimplemented method;
 }
 
 		int main(void) {
@@ -83,9 +110,10 @@ int hiloPrograma(){
 			handshake(server);
 
 			consoleToKernel(server);
+			int seleccion;
+			char* bufferAnsisop=malloc(256);
 			while (1) {
-				puts("Seleccione una opcion: \n1 para Iniciar Programa \n2 para Finalizar Programa \n3 para Desconectar la consola \n4 para Limpiar consola\n");
-				int seleccion;
+				puts("Seleccione una opcion: \n1 para Iniciar Programa \n2 para Finalizar Programa \n3 para Desconectar la consola \n4 para Limpiar consola\n5 para enviar Ansisop");
 				scanf("%i", &seleccion);
 				switch (seleccion) {
 				case 1:
@@ -94,7 +122,7 @@ int hiloPrograma(){
 								pthread_attr_t atributo;
 								pthread_attr_init(&atributo);
 								pthread_attr_setdetachstate(&atributo, PTHREAD_CREATE_DETACHED);
-								pthread_create(&hiloPrograma, &atributo, (int*)hiloPrograma, NULL);
+								pthread_create(&hiloPrograma, &atributo, (void*)hiloPrograma, NULL);
 					break;
 				case 2:
 					printf("Finalizar Programa\n\n");
@@ -109,6 +137,11 @@ int hiloPrograma(){
 					clearScreen();
 					printf("\n");
 					printf("\n");
+					break;
+				case 5:
+					printf("Ingresar Path\n");
+					scanf("%s", &bufferAnsisop);
+					enviarAnsisop(server, bufferAnsisop);
 					break;
 				default:
 					printf("Ingrese una opcion valida\n\n");
