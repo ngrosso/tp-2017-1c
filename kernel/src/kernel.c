@@ -12,7 +12,7 @@
 //static uint32_t const ID_CONSOLA=1;INICIALIZAR_ANSISOP
 //static uint32_t const ID_FILESYSTEM=2;
 
-int puertoKernel="8080";  //este puerto es provisorio porque puertoKernel no existe
+char* puertoKernel="8080";  //este puerto es provisorio porque puertoKernel no existe
 t_config *configKernel;
 char* ipMemoria;
 char* ipFS;
@@ -26,7 +26,7 @@ void *buf;    // buffer para datos del cliente
 
 void inicializarCFG(){
 	configKernel=malloc(sizeof(t_config));
-	configKernel=config_create("/home/utnso/git/tp-2017-1c-ProgramRangers/kernel/src/kernel.config");
+	configKernel=config_create("/home/utnso/tp-2017-1c-ProgramRangers/kernel/src/kernel.config");
 	puertoProg=config_get_int_value(configKernel,"PUERTO_PROG");
 	puertoCpu=config_get_int_value(configKernel,"PUERTO_CPU");
 	ipMemoria=config_get_string_value(configKernel,"IP_MEMORIA");
@@ -47,18 +47,42 @@ void inicializarCFG(){
 
 void broadcastMessage(int fdmax, int socket_fd, char msg[256], int nbytes, fd_set* master, int sender);
 
+void inicializarAnsisop(int s_consola, uint32_t cant_leer){
+	char* progAnsisop=malloc(cant_leer);
+	recv(s_consola,progAnsisop,cant_leer,0);
+	printf("Se recibio el siguiente Ansisop:\n");
+	printf("%s\n",progAnsisop);
+//	inicializarPCB(s_consola,progAnsisop);
+	free(progAnsisop);
+}
 
 
 int handShake(int socket) {
 	uint32_t idCliente;
-	recvAndDeserialize(socket,&idCliente);
-	int nBytes = &idCliente;
+//	recvAndDeserialize(socket,&idCliente);
+//	int nBytes = &idCliente;
+	int nBytes = recv(socket, &idCliente, sizeof(uint32_t), 0);
 	if (nBytes <= 0) {
 		return 0;
 	}
 	printf("codigoProceso recibido en handshake %i", idCliente);
 	printf("\n");
-	return idCliente;
+	switch (idCliente) {
+		case ID_CONSOLA:
+			return 1;
+			break;
+//		case ID_FILESYSTEM:
+//			return 2;
+//			break;
+		case ID_MEMORIA:
+			return 3;
+			break;
+		case ID_CPU:
+			return 4;
+			break;
+		default:
+			break;
+	};
 }
 
 
@@ -66,7 +90,6 @@ void atenderOrdenSegunID(int socket,uint32_t id, int tamanio) {
 	uint32_t orden;
 	uint32_t tamanio_buffer;
 	int mov_puntero=tamanio;
-	int valor;
 	switch ((int) id) {
 		case ID_CONSOLA:
 			memcpy(&orden, buf + mov_puntero, sizeof(uint32_t));
@@ -75,9 +98,8 @@ void atenderOrdenSegunID(int socket,uint32_t id, int tamanio) {
 //			todo: poner esto en una var global a todos los procesos
 //			case INICIALIZAR_ANSISOP: {
 			case 123: {
-					printf("sabe");
 					memcpy(&tamanio_buffer, buf + mov_puntero, sizeof(uint32_t));
-//					inicializarAnsisop(socket,tamanio_buffer); //aca inicializo el programa Ansisop, osea PCB etc etc
+					inicializarAnsisop(socket,tamanio_buffer); //aca inicializo el programa Ansisop, osea PCB etc etc
 				}
 				break;
 //				TODO: VER CADA CASO
@@ -198,7 +220,7 @@ int main(void) {
     	int fdmax;        // maximum file descriptor number
     	struct timeval tv;
     	int i, nbytes;
-    	char buf[256];
+//    	char buf[256];
 
     	tv.tv_sec = 2;
     	tv.tv_usec = 500000;
@@ -303,7 +325,9 @@ int main(void) {
         		            			}
     		            			}
     		            	}else{ // SI NO ES PETICION DE CONEXION NUEVA
-    		            		nbytes = recv(i, buf, sizeof buf, 0);
+    		    				buf=malloc(sizeof(uint32_t)*3);
+    		            		nbytes = recv(i, buf, sizeof(uint32_t)*3, 0);
+
     		            		if(nbytes  <= 0){ // SI ES ERROR(<0) O DESCONEXION(0)
     		            			if(nbytes == 0){
     		            				printf("Connection of socket N° %i closed\n",i);

@@ -15,9 +15,10 @@ typedef enum {
 	ID_CPU,
 	ID_CONSOLA,
 	ID_MEMORIA,
+	ID_FILESYSTEM,
 	INICIALIZAR_PROGRAMA_MEMORIA, //El Kernel indica a memoria que inicia un programa.
 	FINALIZAR_PROGRAMA_MEMORIA,
-	INICIALIZAR_ANSISOP,//El Kernel indica a memoria que termino el programa, tambien puede usarlo la UMC para avisar.
+	INIT_ANSISOP,//El Kernel indica a memoria que termino el programa, tambien puede usarlo la UMC para avisar.
 } identificadores;
 
 typedef struct {

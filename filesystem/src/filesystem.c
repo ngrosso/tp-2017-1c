@@ -5,6 +5,7 @@
 #include <sys/socket.h>
 #include <arpa/inet.h>
 #include <netdb.h>
+#include "estructuras.h"
 
 char* puntoMontaje;
 int puerto;
@@ -35,7 +36,7 @@ void inicializarCFG(){
 }
 
 void handshake(int socket) {
-	uint32_t idCliente=ID_FS;
+	uint32_t idCliente=ID_FILESYSTEM;
 	send(socket,&idCliente,sizeof(uint32_t),0);
 	recv(socket,buf,8,0);
 	printf("el mensaje recibido del kernel es: %s \n",buf);

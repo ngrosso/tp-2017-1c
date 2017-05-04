@@ -37,15 +37,17 @@ void enviarAnsisop(int server, char* argumento){
 	}
 
 	fseek(progAnsisop,0,SEEK_END);
-	uint32_t sizeAnsisop=(ftell(progAnsisop)-115);
-	fseek(progAnsisop,115,SEEK_SET);
+	//	uint32_t sizeAnsisop=(ftell(progAnsisop)-115);
+	//	fseek(progAnsisop,115,SEEK_SET);
+	uint32_t sizeAnsisop=ftell(progAnsisop);
+	fseek(progAnsisop,0,SEEK_SET);
 	void*bufferArchivo=malloc(sizeAnsisop);
 	fread(bufferArchivo,sizeAnsisop,1,progAnsisop);
 	buffer=malloc(sizeAnsisop+(sizeof(uint32_t)*3));
 	printf("%s\n",(char*)bufferArchivo);
 	uint32_t idconsola= ID_CONSOLA;
 //	TODO: PONER LA ORDEN
-//	uint32_t orden = INICIALIZAR_ANSISOP;
+//	uint32_t orden = INIT_ANSISOP;
 	uint32_t orden = 123;
 	memcpy(buffer,&idconsola,sizeof(uint32_t));
 	memcpy(buffer+sizeof(uint32_t),&orden,sizeof(uint32_t));
@@ -66,11 +68,13 @@ void inicializarCFG() {
 
 void handshake(int socket) {
 	uint32_t idCliente = ID_CONSOLA;
-	t_msg mensaje;
-	mensaje.m_id = 1;
-	mensaje.m_size = sizeof(uint32_t);
-	mensaje.m_payload = &idCliente;
-	serializeAndSend(&mensaje, socket);
+	send(socket,&idCliente,sizeof(uint32_t),0);
+
+//	t_msg mensaje;
+//	mensaje.m_id = 1;
+//	mensaje.m_size = sizeof(uint32_t);
+//	mensaje.m_payload = &idCliente;
+//	serializeAndSend(&mensaje, socket);
 }
 
 void consoleToKernel(int socket) {
@@ -100,6 +104,7 @@ void hiloPrograma(){
 			struct sockaddr_in direccionServidor;
 			server = socket(AF_INET, SOCK_STREAM, 0);
 			crearCliente(&direccionServidor, puertoKernel, ipKernel);
+
 			if (connect(server, (void*) &direccionServidor,
 					sizeof(direccionServidor)) != 0) {
 				perror("No se pudo conectar al kernel");
@@ -109,9 +114,9 @@ void hiloPrograma(){
 			//Verifico conexion con el Kernel-----------------------------------------------------------------------------------------------------------
 			handshake(server);
 
-			consoleToKernel(server);
+//			consoleToKernel(server);
 			int seleccion;
-			char* bufferAnsisop=malloc(256);
+			char *bufferAnsisop=malloc(256);
 			while (1) {
 				puts("Seleccione una opcion: \n1 para Iniciar Programa \n2 para Finalizar Programa \n3 para Desconectar la consola \n4 para Limpiar consola\n5 para enviar Ansisop");
 				scanf("%i", &seleccion);
@@ -140,7 +145,7 @@ void hiloPrograma(){
 					break;
 				case 5:
 					printf("Ingresar Path\n");
-					scanf("%s", &bufferAnsisop);
+					scanf("%s", bufferAnsisop);
 					enviarAnsisop(server, bufferAnsisop);
 					break;
 				default:
