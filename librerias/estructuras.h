@@ -10,6 +10,8 @@
 
 #include <commons/collections/list.h>
 #include <stdint.h>
+#include <parser/metadata_program.h>
+
 typedef enum {
 	ID_KERNEL,
 	ID_CPU,
@@ -24,6 +26,8 @@ typedef enum {
 typedef struct {
 	uint32_t PID;
 	uint32_t PC;
+	uint32_t program_counter;
+	t_intructions  indice_codigo[];
 } t_PCB;
 
 typedef struct { // Struct de headers de envio de datos

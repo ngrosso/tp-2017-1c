@@ -6,6 +6,7 @@
 #include <netdb.h>
 #include <commons/config.h>
 #include "estructuras.h"
+#include <parser/metadata_program.h>
 
 
 //todo: sacar el ID_CONSOLA de aca, meterlo todo en un solo lugar
@@ -56,6 +57,20 @@ void inicializarAnsisop(int s_consola, uint32_t cant_leer){
 	free(progAnsisop);
 }
 
+t_PCB inicializarPCB(uint32_t pid, char * codigo){
+	t_metadata_program *meta;
+	t_PCB pcb;
+	meta= metadata_desde_literal(codigo);
+	pcb.PID=pid;
+	t_intructions aux[meta->instrucciones_size];
+	int i;
+	for (i = 0; i<=meta->instrucciones_size ;i++){
+	aux[i]=*(meta->instrucciones_serializado + i);
+	}
+	pcb.indice_codigo=aux;
+	pcb.program_counter=0;
+	return pcb;
+}
 
 int handShake(int socket) {
 	uint32_t idCliente;
